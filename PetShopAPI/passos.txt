@@ -1,0 +1,3 @@
+
+PARA TESTAR A API:
+    dotnet run
