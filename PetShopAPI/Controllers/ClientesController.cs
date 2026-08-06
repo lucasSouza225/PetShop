@@ -16,14 +16,14 @@ namespace PetShopAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Clientes
+        // GET
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
         {
             return await _context.Clientes.Include(c => c.Pets).ToListAsync();
         }
 
-        // GET: api/Clientes/5
+        // GET
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetCliente(int id)
         {
@@ -39,7 +39,7 @@ namespace PetShopAPI.Controllers
             return cliente;
         }
 
-        // POST: api/Clientes
+        // POST
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
@@ -55,7 +55,7 @@ namespace PetShopAPI.Controllers
             return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
         }
 
-        // PUT: api/Clientes/5
+        // PUT
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCliente(int id, Cliente cliente)
         {
@@ -85,7 +85,7 @@ namespace PetShopAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Clientes/5
+        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCliente(int id)
         {

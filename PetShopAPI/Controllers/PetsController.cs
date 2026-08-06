@@ -17,7 +17,7 @@ namespace PetShopAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Pets
+        // GET
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PetDTO>>> GetPets()
         {
@@ -25,7 +25,6 @@ namespace PetShopAPI.Controllers
                 .Include(p => p.Cliente)
                 .ToListAsync();
 
-            // Converte para DTO (sem loop)
             var petsDTO = pets.Select(p => new PetDTO
             {
                 Id = p.Id,
@@ -41,7 +40,7 @@ namespace PetShopAPI.Controllers
             return Ok(petsDTO);
         }
 
-        // GET: api/Pets/5
+        // GET
         [HttpGet("{id}")]
         public async Task<ActionResult<PetDTO>> GetPet(int id)
         {
@@ -70,7 +69,7 @@ namespace PetShopAPI.Controllers
             return petDTO;
         }
 
-        // GET: api/Pets/cliente/5
+        // GET
         [HttpGet("cliente/{clienteId}")]
         public async Task<ActionResult<IEnumerable<PetDTO>>> GetPetsByCliente(int clienteId)
         {
@@ -94,7 +93,7 @@ namespace PetShopAPI.Controllers
             return Ok(petsDTO);
         }
 
-        // POST: api/Pets
+        // POST
         [HttpPost]
         public async Task<ActionResult<PetDTO>> PostPet(PetCreateDTO petDto)
         {
@@ -119,12 +118,11 @@ namespace PetShopAPI.Controllers
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
 
-            // Recarrega com o cliente
             var petCriado = await _context.Pets
                 .Include(p => p.Cliente)
                 .FirstOrDefaultAsync(p => p.Id == pet.Id);
 
-            // Retorna DTO
+            // aqui eu retorna a poha do DTO
             var petDTO = new PetDTO
             {
                 Id = petCriado.Id,
@@ -140,7 +138,7 @@ namespace PetShopAPI.Controllers
             return CreatedAtAction(nameof(GetPet), new { id = pet.Id }, petDTO);
         }
 
-        // PUT: api/Pets/5
+        // PUT
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPet(int id, Pet pet)
         {
@@ -170,7 +168,7 @@ namespace PetShopAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Pets/5
+        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePet(int id)
         {

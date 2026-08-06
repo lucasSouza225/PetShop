@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PetShopAPI.Models;
 
-namespace PetShopAPI.Data 
+namespace PetShopAPI.Data
 {
     public class PetShopContext : DbContext
     {
@@ -9,14 +9,20 @@ namespace PetShopAPI.Data
 
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Pet> Pets { get; set; }
+        public DbSet<Servico> Servicos { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define o relacionamento
             modelBuilder.Entity<Pet>()
                 .HasOne(p => p.Cliente)
                 .WithMany(c => c.Pets)
                 .HasForeignKey(p => p.ClienteId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Servico>()
+                .HasOne(s => s.Pet)
+                .WithMany() 
+                .HasForeignKey(s => s.PetId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

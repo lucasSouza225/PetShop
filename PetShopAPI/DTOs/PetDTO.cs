@@ -9,6 +9,6 @@ namespace PetShopAPI.DTOs
         public int Idade { get; set; }
         public string? Observacoes { get; set; }
         public int ClienteId { get; set; }
-        public string ClienteNome { get; set; } = string.Empty; // Só o nome, não o objeto inteiro!
+        public string ClienteNome { get; set; } = string.Empty; // Só o nome nao o objeto inteiro!
     }
 }
