@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using PetShopAPI.Data;
+using PetShopAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,47 +16,92 @@ builder.Services.AddDbContext<PetShopContext>(options =>
 // 2️⃣ CONFIGURAÇÃO DOS CONTROLLERS
 builder.Services.AddControllers();
 
-// 3️⃣ CONFIGURAÇÃO DO SWAGGER (documentação da API)
+// 3️⃣ CONFIGURAÇÃO DO SWAGGER
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "PetShop API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "PetShop API",
         Version = "v1",
         Description = "API para gerenciamento de petshop com serviços e agendamentos"
     });
+
+    // 🔐 Configura o Swagger para aceitar JWT
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT (ex: Bearer seutoken)",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// 4️⃣ CONFIGURAÇÃO DO CORS (pra permitir o Angular acessar)
+// 4️⃣ CONFIGURAÇÃO DO CORS (Angular)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200") // URL do Angular
+            policy.WithOrigins("http://localhost:4200")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
 });
 
+// 5️⃣ 🔐 AUTENTICAÇÃO JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt:Key não configurada no appsettings.json");
+var key = Encoding.UTF8.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
+// 6️⃣ REGISTRA O AuthService (INJEÇÃO DE DEPENDÊNCIA)
+builder.Services.AddScoped<AuthService>(); // <--- ESSA LINHA ESTAVA FALTANDO!
+
 var app = builder.Build();
 
-// 5️⃣ PIPELINE DE REQUISIÇÕES
-
-// Swagger (sempre disponível, mas em produção você pode restringir)
-app.UseSwagger();
-app.UseSwaggerUI(c => 
+// 7️⃣ PIPELINE DE REQUISIÇÕES
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetShop API v1");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetShop API v1"));
+}
 
 app.UseHttpsRedirection();
-
-// 6️⃣ ATIVA O CORS
 app.UseCors("AllowAngular");
 
-app.UseAuthorization();
+app.UseAuthentication(); // 🔐 ATIVA A AUTENTICAÇÃO
+app.UseAuthorization();  // 🔐 ATIVA A AUTORIZAÇÃO
 
 app.MapControllers();
 
