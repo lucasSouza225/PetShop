@@ -1,5 +1,19 @@
 
-PARA TESTAR A API:
+# PARA TESTAR A API:
+    http://localhost:5206/swagger
+
+# Rodar a API
     dotnet run
 
-    http://localhost:5206/swagger
+# Criar migration
+    dotnet ef migrations add NomeMigration
+
+# Atualizar banco
+    dotnet ef database update
+
+
+# Limpar projeto
+    dotnet clean && rmdir /s /q bin obj
+
+# Ver logs
+    cat logs/petshop.log

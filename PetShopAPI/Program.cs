@@ -5,18 +5,30 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using PetShopAPI.Data;
 using PetShopAPI.Services;
+using PetShopAPI.Middleware;
+using Serilog;
+
+// 🔥 CONFIGURAÇÃO DO SERILOG
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/petshop.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1️⃣ CONFIGURAÇÃO DO BANCO DE DADOS (MySQL)
+// 🔥 USA O SERILOG
+builder.Host.UseSerilog();
+
+// 1️⃣ BANCO DE DADOS
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<PetShopContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// 2️⃣ CONFIGURAÇÃO DOS CONTROLLERS
+// 2️⃣ CONTROLLERS
 builder.Services.AddControllers();
 
-// 3️⃣ CONFIGURAÇÃO DO SWAGGER
+// 3️⃣ SWAGGER
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -27,7 +39,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gerenciamento de petshop com serviços e agendamentos"
     });
 
-    // 🔐 Configura o Swagger para aceitar JWT
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -54,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// 4️⃣ CONFIGURAÇÃO DO CORS (Angular)
+// 4️⃣ CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -66,8 +77,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-// 5️⃣ 🔐 AUTENTICAÇÃO JWT
-var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt:Key não configurada no appsettings.json");
+// 5️⃣ JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt:Key não configurada");
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -85,12 +96,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 6️⃣ REGISTRA O AuthService (INJEÇÃO DE DEPENDÊNCIA)
-builder.Services.AddScoped<AuthService>(); // <--- ESSA LINHA ESTAVA FALTANDO!
+// 6️⃣ SERVIÇOS
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
-// 7️⃣ PIPELINE DE REQUISIÇÕES
+// 7️⃣ PIPELINE
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -100,9 +111,33 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
 
-app.UseAuthentication(); // 🔐 ATIVA A AUTENTICAÇÃO
-app.UseAuthorization();  // 🔐 ATIVA A AUTORIZAÇÃO
+// 🔥 MIDDLEWARE DE EXCEÇÃO
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// 🔥 INICIALIZADOR DO BANCO
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<PetShopContext>();
+    
+    // Cria o banco se não existir (EQUIVALENTE AO database update)
+    await context.Database.EnsureCreatedAsync();
+    
+    // Inicializa com admin
+    await DbInitializer.InitializeAsync(context);
+}
 
 app.MapControllers();
-
 app.Run();
+
+// 🔥 FECHA O LOG AO FINALIZAR
+Log.CloseAndFlush();
+
+
+app.MapControllers();
+app.Run();
+
+// 🔥 FECHA O LOG AO FINALIZAR
+Log.CloseAndFlush();
