@@ -17,3 +17,6 @@
 
 # Ver logs
     cat logs/petshop.log
+
+# Rodar a Front
+    ng serve
