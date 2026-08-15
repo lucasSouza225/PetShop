@@ -16,8 +16,8 @@ export interface Servico {
 export interface ServicoCreate {
   petId: number;
   tipo: string;
+  preco?: number; 
   observacoes?: string;
-  preco: number;
 }
 
 export interface ServicoStatusUpdate {

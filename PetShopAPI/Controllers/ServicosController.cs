@@ -126,7 +126,7 @@ namespace PetShopAPI.Controllers
                 Tipo = servicoDto.Tipo,
                 Status = "Aguardando", 
                 Observacoes = servicoDto.Observacoes,
-                Preco = servicoDto.Preco,
+                Preco = 0,
                 DataSolicitacao = DateTime.Now
             };
 

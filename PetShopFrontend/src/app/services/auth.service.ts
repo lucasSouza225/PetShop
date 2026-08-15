@@ -15,7 +15,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Verifica se há usuário salvo ao iniciar
     const savedUser = localStorage.getItem(this.userKey);
     if (savedUser) {
       this.currentUserSubject.next(JSON.parse(savedUser));
@@ -57,5 +56,10 @@ export class AuthService {
 
   getCurrentUser(): any {
     return this.currentUserSubject.value;
+  }
+
+  getClienteId(): number | null {
+    const user = this.currentUserSubject.value;
+    return user?.id || null;
   }
 }

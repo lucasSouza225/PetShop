@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Servico, ServicoCreate, ServicoStatusUpdate } from '../models/servico.model';
+import { Servico, ServicoCreate } from '../models/servico.model';
 
 @Injectable({
   providedIn: 'root'
