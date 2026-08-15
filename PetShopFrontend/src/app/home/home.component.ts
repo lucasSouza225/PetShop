@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
       <div class="container">
         <a class="navbar-brand fw-bold text-primary" routerLink="/">
-          <i class="fas fa-paw me-2"></i>PetCare
+          <i class="fas fa-paw me-2"></i>Mundo Pet
         </a>
         <button
           class="navbar-toggler border-0"
@@ -54,7 +54,7 @@ import { RouterModule } from '@angular/router';
             <div class="hero-content p-4 p-lg-5 rounded-4">
               <!-- Badge -->
               <span class="badge bg-primary bg-opacity-75 mb-3 fs-6 py-2 px-3">
-                🐾 Bem-vindo ao PetCare
+                🐾 Bem-vindo ao Mundo Pet
               </span>
 
               <!-- Título -->
@@ -176,7 +176,7 @@ import { RouterModule } from '@angular/router';
     <footer class="py-4 bg-dark text-white">
       <div class="container text-center">
         <p class="mb-0">
-          <i class="fas fa-paw me-2"></i> © 2026 PetCare — Sistema de gestão para Pet Shops.
+          <i class="fas fa-paw me-2"></i> © 2026 Mundo Pet — Sistema de gestão para Pet Shops.
         </p>
       </div>
     </footer>
@@ -197,7 +197,7 @@ import { RouterModule } from '@angular/router';
     .hero-section {
       min-height: 100vh;
       padding-top: 76px;
-      background-image: url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200');
+      background-image: url('/images/banner.png');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -212,7 +212,7 @@ import { RouterModule } from '@angular/router';
     /* CONTEÚDO DO BANNER */
     .hero-content {
       backdrop-filter: blur(2px);
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -225,7 +225,7 @@ import { RouterModule } from '@angular/router';
     }
 
     .text-white-50 {
-      color: rgba(255, 255, 255, 0.7) !important;
+      color: rgba(255, 255, 255, 0.82) !important;
     }
 
     .btn-outline-light {
@@ -254,6 +254,86 @@ import { RouterModule } from '@angular/router';
     /* ===== SCROLL MARGIN ===== */
     section {
       scroll-margin-top: 76px;
+    }
+
+
+
+    /* ===== PALETA Mundo Pet ===== */
+    :host {
+      --pet-teal: #147d78;
+      --pet-teal-dark: #0f625e;
+      --pet-orange: #f59a23;
+      --pet-orange-dark: #d97d0b;
+      --pet-cream: #fff4df;
+      --pet-cream-light: #fffaf1;
+      --pet-text: #334155;
+    }
+
+    /* Substitui visualmente o azul padrão do Bootstrap */
+    .text-primary {
+      color: var(--pet-teal) !important;
+    }
+
+    .bg-primary {
+      background-color: var(--pet-teal) !important;
+    }
+
+    .btn-primary {
+      background-color: var(--pet-teal) !important;
+      border-color: var(--pet-teal) !important;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background-color: var(--pet-teal-dark) !important;
+      border-color: var(--pet-teal-dark) !important;
+    }
+
+    .btn-outline-primary {
+      color: var(--pet-teal) !important;
+      border-color: var(--pet-teal) !important;
+    }
+
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus {
+      color: #fff !important;
+      background-color: var(--pet-teal) !important;
+      border-color: var(--pet-teal) !important;
+    }
+
+    .badge.bg-primary {
+      background-color: rgba(20, 125, 120, 0.85) !important;
+    }
+
+    /* Laranja usado nos destaques */
+    .text-warning {
+      color: var(--pet-orange) !important;
+    }
+
+    /* Fundo claro das áreas de conteúdo */
+    .bg-light {
+      background-color: var(--pet-cream-light) !important;
+    }
+
+    /* Textos */
+    .card,
+    .hero-content {
+      color: var(--pet-text);
+    }
+
+    /* Ícones de sucesso/notificação */
+    .text-success {
+      color: #3f9b63 !important;
+    }
+
+    .text-info {
+      color: var(--pet-teal) !important;
+    }
+
+    /* Pequeno ajuste visual do conteúdo sobre o banner */
+    .hero-content {
+      background: rgba(20, 125, 120, 0.16);
+      border-color: rgba(255, 255, 255, 0.22);
     }
 
     /* ===== RESPONSIVIDADE ===== */
