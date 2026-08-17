@@ -27,6 +27,10 @@ export class ServicoService {
     return this.http.put(`${this.apiUrl}/${id}/status`, `"${status}"`);
   }
 
+  atualizarPreco(id: number, preco: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/preco`, { preco });
+  }
+
   deletarServico(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

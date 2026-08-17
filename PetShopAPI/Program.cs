@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json;
 using PetShopAPI.Data;
 using PetShopAPI.Services;
 using PetShopAPI.Middleware;
@@ -25,8 +26,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<PetShopContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// 2️⃣ CONTROLLERS
-builder.Services.AddControllers();
+// 2️⃣ CONTROLLERS COM CONFIGURAÇÃO PARA EVITAR LOOPS
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 // 3️⃣ SWAGGER
 builder.Services.AddEndpointsApiExplorer();
@@ -73,7 +79,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("http://localhost:4200")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
 
@@ -117,27 +124,45 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 🔥 INICIALIZADOR DO BANCO
+// 🔥 INICIALIZADOR DO BANCO (CORRIGIDO)
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<PetShopContext>();
-    
-    // Cria o banco se não existir (EQUIVALENTE AO database update)
-    await context.Database.EnsureCreatedAsync();
-    
-    // Inicializa com admin
-    await DbInitializer.InitializeAsync(context);
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<PetShopContext>();
+        
+        // Verifica se as migrações pendentes existem
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+        if (pendingMigrations.Any())
+        {
+            await context.Database.MigrateAsync();
+            Console.WriteLine("✅ Migrações aplicadas com sucesso!");
+        }
+        else
+        {
+            // Se não há migrações pendentes, apenas garante que o banco existe
+            await context.Database.EnsureCreatedAsync();
+            Console.WriteLine("✅ Banco verificado/ criado com sucesso!");
+        }
+        
+        // Inicializa com admin
+        await DbInitializer.InitializeAsync(context);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Erro ao inicializar o banco: {ex.Message}");
+        Log.Error(ex, "Erro ao inicializar o banco");
+    }
 }
 
 app.MapControllers();
-app.Run();
 
 // 🔥 FECHA O LOG AO FINALIZAR
-Log.CloseAndFlush();
-
-
-app.MapControllers();
-app.Run();
-
-// 🔥 FECHA O LOG AO FINALIZAR
-Log.CloseAndFlush();
+try
+{
+    app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}

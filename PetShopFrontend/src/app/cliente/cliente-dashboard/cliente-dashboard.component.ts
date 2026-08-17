@@ -6,6 +6,8 @@ import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { PetService } from '../../services/pet.service';
 import { ServicoService } from '../../services/servico.service';
+import { PrecoService } from '../../services/preco.service';
+import { ToastService } from '../../services/toast.service';
 import { Pet, PetCreate } from '../../models/pet.model';
 import { Servico, ServicoCreate } from '../../models/servico.model';
 
@@ -34,7 +36,6 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
 
       <!-- CONTEÚDO -->
       <div class="container py-4">
-        <!-- Título com saudação -->
         <div class="row mb-4">
           <div class="col-12">
             <h1 class="display-6 fw-bold" style="color: #147d78;">
@@ -47,47 +48,24 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
         <!-- TABS -->
         <ul class="nav nav-tabs mb-4" id="clienteTabs" role="tablist">
           <li class="nav-item" role="presentation">
-            <button
-              class="nav-link active"
-              id="pets-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#pets"
-              type="button"
-              style="color: #147d78;"
-            >
+            <button class="nav-link active" id="pets-tab" data-bs-toggle="tab" data-bs-target="#pets" type="button" style="color: #147d78;">
               <i class="fas fa-dog me-1"></i> Meus Pets
-              <span class="badge bg-primary ms-1" style="background-color: #147d78;">{{
-                pets.length
-              }}</span>
+              <span class="badge bg-primary ms-1" style="background-color: #147d78;">{{ pets.length }}</span>
             </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button
-              class="nav-link"
-              id="servicos-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#servicos"
-              type="button"
-              style="color: #147d78;"
-            >
+            <button class="nav-link" id="servicos-tab" data-bs-toggle="tab" data-bs-target="#servicos" type="button" style="color: #147d78;">
               <i class="fas fa-cut me-1"></i> Serviços
-              <span class="badge bg-primary ms-1" style="background-color: #147d78;">{{
-                servicos.length
-              }}</span>
+              <span class="badge bg-primary ms-1" style="background-color: #147d78;">{{ servicos.length }}</span>
             </button>
           </li>
         </ul>
 
-        <!-- CONTEÚDO DAS TABS -->
         <div class="tab-content">
           <!-- TAB PETS -->
           <div class="tab-pane fade show active" id="pets">
             <div class="d-flex justify-content-end mb-3">
-              <button
-                class="btn btn-primary"
-                style="background-color: #147d78; border-color: #147d78;"
-                (click)="abrirModalPet()"
-              >
+              <button class="btn btn-primary" style="background-color: #147d78; border-color: #147d78;" (click)="abrirModalPet()">
                 <i class="fas fa-plus me-1"></i> Novo Pet
               </button>
             </div>
@@ -101,11 +79,7 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
             <div *ngIf="!carregandoPets && pets.length === 0" class="text-center py-5">
               <i class="fas fa-dog fa-4x text-muted mb-3"></i>
               <p class="text-muted">Você ainda não cadastrou nenhum pet.</p>
-              <button
-                class="btn btn-primary"
-                style="background-color: #147d78; border-color: #147d78;"
-                (click)="abrirModalPet()"
-              >
+              <button class="btn btn-primary" style="background-color: #147d78; border-color: #147d78;" (click)="abrirModalPet()">
                 <i class="fas fa-plus me-1"></i> Cadastrar Primeiro Pet
               </button>
             </div>
@@ -118,16 +92,12 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
                       <div>
                         <h5 class="card-title fw-bold" style="color: #147d78;">{{ pet.nome }}</h5>
                         <p class="card-text text-muted small">
-                          <i class="fas fa-paw me-1"></i> {{ pet.especie }}<br />
-                          <i class="fas fa-tag me-1"></i> {{ pet.raca || 'Raça não informada'
-                          }}<br />
+                          <i class="fas fa-paw me-1"></i> {{ pet.especie }}<br>
+                          <i class="fas fa-tag me-1"></i> {{ pet.raca || 'Raça não informada' }}<br>
                           <i class="fas fa-calendar me-1"></i> {{ pet.idade }} anos
                         </p>
                       </div>
-                      <div
-                        class="pet-avatar rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 50px; height: 50px; background-color: #e8f5e9; color: #147d78;"
-                      >
+                      <div class="pet-avatar rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: #e8f5e9; color: #147d78;">
                         <i class="fas fa-dog fa-2x"></i>
                       </div>
                     </div>
@@ -136,11 +106,7 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
                     </p>
                   </div>
                   <div class="card-footer bg-transparent border-0 d-flex gap-2">
-                    <button
-                      class="btn btn-outline-primary btn-sm flex-fill"
-                      style="color: #147d78; border-color: #147d78;"
-                      (click)="abrirServico(pet)"
-                    >
+                    <button class="btn btn-outline-primary btn-sm flex-fill" style="color: #147d78; border-color: #147d78;" (click)="abrirServico(pet)">
                       <i class="fas fa-cut me-1"></i> Serviço
                     </button>
                     <button class="btn btn-outline-secondary btn-sm" (click)="editarPet(pet)">
@@ -180,33 +146,31 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
                           <small class="text-muted">Pet: {{ servico.petNome }}</small>
                         </div>
                         <div class="col-md-3">
-                          <span
-                            class="badge rounded-pill px-3 py-2"
-                            [ngClass]="{
-                              'bg-warning text-dark': servico.status === 'Aguardando',
-                              'bg-info text-white': servico.status === 'EmAndamento',
-                              'bg-success text-white': servico.status === 'Pronto',
-                              'bg-danger text-white': servico.status === 'Cancelado',
-                            }"
-                          >
+                          <span class="badge rounded-pill px-3 py-2" [ngClass]="{
+                            'bg-warning text-dark': servico.status === 'Aguardando',
+                            'bg-info text-white': servico.status === 'EmAndamento',
+                            'bg-success text-white': servico.status === 'Pronto',
+                            'bg-danger text-white': servico.status === 'Cancelado'
+                          }">
                             <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
                             {{ servico.status }}
                           </span>
                         </div>
                         <div class="col-md-3">
                           <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>
-                            {{ servico.dataSolicitacao | date: 'dd/MM/yyyy HH:mm' }}
+                            <i class="fas fa-calendar me-1"></i> {{ servico.dataSolicitacao | date:'dd/MM/yyyy HH:mm' }}
                           </small>
                           <div *ngIf="servico.dataConclusao" class="small text-success">
-                            <i class="fas fa-check-circle me-1"></i> Concluído em:
-                            {{ servico.dataConclusao | date: 'dd/MM/yyyy' }}
+                            <i class="fas fa-check-circle me-1"></i> Concluído: {{ servico.dataConclusao | date:'dd/MM/yyyy' }}
                           </div>
                         </div>
                         <div class="col-md-3 text-end">
-                          <span class="fw-bold" style="color: #147d78;"
-                            >R$ {{ servico.preco | number: '1.2-2' }}</span
-                          >
+                          <span *ngIf="servico.preco > 0" class="fw-bold" style="color: #147d78;">
+                            R$ {{ servico.preco | number:'1.2-2' }}
+                          </span>
+                          <span *ngIf="servico.preco === 0" class="text-muted small">
+                            <i class="fas fa-hourglass-half me-1"></i> Aguardando preço
+                          </span>
                         </div>
                       </div>
                       <div *ngIf="servico.observacoes" class="mt-2">
@@ -238,22 +202,11 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
             <form #petForm="ngForm">
               <div class="mb-3">
                 <label class="form-label fw-semibold">Nome *</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="petFormData.nome"
-                  name="nome"
-                  required
-                />
+                <input type="text" class="form-control" [(ngModel)]="petFormData.nome" name="nome" required>
               </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Espécie *</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="petFormData.especie"
-                  name="especie"
-                  required
-                >
+                <select class="form-select" [(ngModel)]="petFormData.especie" name="especie" required>
                   <option value="Cachorro">Cachorro</option>
                   <option value="Gato">Gato</option>
                   <option value="Pássaro">Pássaro</option>
@@ -262,51 +215,28 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
               </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Raça</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="petFormData.raca"
-                  name="raca"
-                />
+                <input type="text" class="form-control" [(ngModel)]="petFormData.raca" name="raca">
               </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Idade</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  [(ngModel)]="petFormData.idade"
-                  name="idade"
-                  min="0"
-                />
+                <input type="number" class="form-control" [(ngModel)]="petFormData.idade" name="idade" min="0">
               </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Observações</label>
-                <textarea
-                  class="form-control"
-                  [(ngModel)]="petFormData.observacoes"
-                  name="observacoes"
-                  rows="2"
-                ></textarea>
+                <textarea class="form-control" [(ngModel)]="petFormData.observacoes" name="observacoes" rows="2"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer border-0">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              style="background-color: #147d78; border-color: #147d78;"
-              (click)="salvarPet()"
-              [disabled]="petForm.invalid"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" style="background-color: #147d78; border-color: #147d78;" (click)="salvarPet()" [disabled]="petForm.invalid">
               <i class="fas fa-save me-1"></i> Salvar
             </button>
           </div>
         </div>
       </div>
     </div>
+
     <!-- MODAL: SERVIÇO -->
     <div class="modal fade" id="servicoModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -318,13 +248,11 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <p class="text-muted">
-              Solicitando serviço para: <strong>{{ petSelecionado?.nome }}</strong>
-            </p>
+            <p class="text-muted">Solicitando serviço para: <strong>{{ petSelecionado?.nome }}</strong></p>
             <form #servicoForm="ngForm">
               <div class="mb-3">
                 <label class="form-label fw-semibold">Tipo de Serviço *</label>
-                <select class="form-select" [(ngModel)]="servicoFormData.tipo" name="tipo" required>
+                <select class="form-select" [(ngModel)]="servicoFormData.tipo" name="tipo" required (change)="buscarPrecoServico()">
                   <option value="">Selecione...</option>
                   <option value="Banho">Banho</option>
                   <option value="Tosa">Tosa</option>
@@ -334,29 +262,21 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
                   <option value="Outro">Outro</option>
                 </select>
               </div>
-              <!-- CAMPO DE PREÇO REMOVIDO - O ADMIN DEFINE -->
+              <div *ngIf="servicoFormData.preco > 0" class="mb-3">
+                <div class="alert alert-info">
+                  <i class="fas fa-tag me-2"></i>
+                  <strong>Preço sugerido:</strong> R$ {{ servicoFormData.preco | number:'1.2-2' }}
+                </div>
+              </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Observações</label>
-                <textarea
-                  class="form-control"
-                  [(ngModel)]="servicoFormData.observacoes"
-                  name="observacoes"
-                  rows="2"
-                ></textarea>
+                <textarea class="form-control" [(ngModel)]="servicoFormData.observacoes" name="observacoes" rows="2"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer border-0">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              style="background-color: #147d78; border-color: #147d78;"
-              (click)="salvarServico()"
-              [disabled]="servicoForm.invalid"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" style="background-color: #147d78; border-color: #147d78;" (click)="salvarServico()" [disabled]="servicoForm.invalid">
               <i class="fas fa-check me-1"></i> Solicitar
             </button>
           </div>
@@ -364,38 +284,34 @@ import { Servico, ServicoCreate } from '../../models/servico.model';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .nav-tabs .nav-link {
-        border: none;
-        font-weight: 500;
-        padding: 10px 20px;
-      }
-      .nav-tabs .nav-link.active {
-        border-bottom: 3px solid #147d78;
-        background: transparent;
-        color: #147d78 !important;
-      }
-      .nav-tabs .nav-link:hover {
-        border-bottom: 3px solid #147d78;
-      }
-      .card {
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-      .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
-      }
-      .pet-avatar {
-        flex-shrink: 0;
-      }
-      .badge {
-        font-weight: 500;
-      }
-    `,
-  ],
+  styles: [`
+    .nav-tabs .nav-link {
+      border: none;
+      font-weight: 500;
+      padding: 10px 20px;
+    }
+    .nav-tabs .nav-link.active {
+      border-bottom: 3px solid #147d78;
+      background: transparent;
+      color: #147d78 !important;
+    }
+    .nav-tabs .nav-link:hover {
+      border-bottom: 3px solid #147d78;
+    }
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+    }
+    .pet-avatar {
+      flex-shrink: 0;
+    }
+    .badge {
+      font-weight: 500;
+    }
+  `]
 })
 export class ClienteDashboardComponent implements OnInit {
   pets: Pet[] = [];
@@ -422,6 +338,8 @@ export class ClienteDashboardComponent implements OnInit {
     private router: Router,
     private petService: PetService,
     private servicoService: ServicoService,
+    private precoService: PrecoService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -444,15 +362,14 @@ export class ClienteDashboardComponent implements OnInit {
       error: () => {
         this.pets = [];
         this.carregandoPets = false;
-      },
+        this.toastService.error('❌ Erro', 'Erro ao carregar pets.');
+      }
     });
   }
 
   carregarServicos() {
     if (!this.clienteId) return;
-
     this.carregandoServicos = true;
-
     this.petService.listarPetsPorCliente(this.clienteId).subscribe({
       next: (pets) => {
         if (pets.length === 0) {
@@ -460,26 +377,22 @@ export class ClienteDashboardComponent implements OnInit {
           this.carregandoServicos = false;
           return;
         }
-
         const requests = pets.map((pet) => this.servicoService.listarServicosPorPet(pet.id));
-
         forkJoin(requests).subscribe({
           next: (resultados) => {
-            this.servicos = resultados
-              .filter((result) => result !== null && result !== undefined)
-              .flat();
+            this.servicos = resultados.filter(result => result !== null && result !== undefined).flat();
             this.carregandoServicos = false;
           },
           error: () => {
             this.servicos = [];
             this.carregandoServicos = false;
-          },
+          }
         });
       },
       error: () => {
         this.servicos = [];
         this.carregandoServicos = false;
-      },
+      }
     });
   }
 
@@ -524,18 +437,22 @@ export class ClienteDashboardComponent implements OnInit {
         next: () => {
           this.fecharModalPet();
           this.carregarPets();
-          alert('✅ Pet atualizado com sucesso!');
+          this.toastService.success('✅ Sucesso', 'Pet atualizado com sucesso!');
         },
-        error: () => alert('❌ Erro ao atualizar pet.'),
+        error: () => {
+          this.toastService.error('❌ Erro', 'Erro ao atualizar pet.');
+        }
       });
     } else {
       this.petService.criarPet(formData).subscribe({
         next: () => {
           this.fecharModalPet();
           this.carregarPets();
-          alert('✅ Pet criado com sucesso!');
+          this.toastService.success('✅ Sucesso', 'Pet criado com sucesso!');
         },
-        error: () => alert('❌ Erro ao criar pet.'),
+        error: () => {
+          this.toastService.error('❌ Erro', 'Erro ao criar pet.');
+        }
       });
     }
   }
@@ -545,9 +462,11 @@ export class ClienteDashboardComponent implements OnInit {
       this.petService.deletarPet(id).subscribe({
         next: () => {
           this.carregarPets();
-          alert('✅ Pet deletado com sucesso!');
+          this.toastService.success('✅ Sucesso', 'Pet deletado com sucesso!');
         },
-        error: () => alert('❌ Erro ao deletar pet.'),
+        error: () => {
+          this.toastService.error('❌ Erro', 'Erro ao deletar pet.');
+        }
       });
     }
   }
@@ -574,23 +493,41 @@ export class ClienteDashboardComponent implements OnInit {
     this.petSelecionado = null;
   }
 
+  buscarPrecoServico() {
+    const tipo = this.servicoFormData.tipo;
+    if (!tipo) return;
+
+    this.precoService.buscarPorTipo(tipo).subscribe({
+      next: (preco) => {
+        this.servicoFormData.preco = preco.preco;
+        this.toastService.info('💰 Preço encontrado', `Valor sugerido: R$ ${preco.preco.toFixed(2)}`);
+      },
+      error: () => {
+        this.servicoFormData.preco = 0;
+        this.toastService.warning('⚠️ Atenção', 'Preço não encontrado. Aguarde o admin definir.');
+      }
+    });
+  }
+
   salvarServico() {
     if (!this.petSelecionado) return;
 
     const formData: ServicoCreate = {
       petId: this.petSelecionado.id,
       tipo: this.servicoFormData.tipo,
-      preco: 0, // Valor padrão, será atualizado pelo admin
-      observacoes: this.servicoFormData.observacoes || '',
+      preco: this.servicoFormData.preco || 0,
+      observacoes: this.servicoFormData.observacoes || ''
     };
 
     this.servicoService.criarServico(formData).subscribe({
       next: () => {
         this.fecharModalServico();
         this.carregarServicos();
-        alert('✅ Serviço solicitado com sucesso!');
+        this.toastService.success('✅ Sucesso', 'Serviço solicitado com sucesso!');
       },
-      error: () => alert('❌ Erro ao solicitar serviço.'),
+      error: () => {
+        this.toastService.error('❌ Erro', 'Erro ao solicitar serviço.');
+      }
     });
   }
 

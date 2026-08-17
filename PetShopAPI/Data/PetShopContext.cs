@@ -11,6 +11,8 @@ namespace PetShopAPI.Data
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Servico> Servicos { get; set; } 
 
+        public DbSet<PrecoServico> Precos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Pet>()

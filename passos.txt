@@ -20,3 +20,6 @@
 
 # Rodar a Front
     ng serve
+
+admin@petshop.com
+admin123
